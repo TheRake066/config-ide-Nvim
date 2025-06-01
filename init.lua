@@ -1,5 +1,5 @@
--- Sidney's NeoVim Config (init.lua)
--- Estilo IDE moderna, rápido e poderoso
+-- Minha NeoVim Config (init.lua)
+-- Estilo IDE moderna, rápido e atualizada
 
 ---------------------------
 -- 1. Gerenciador: Lazy.nvim
@@ -21,7 +21,87 @@ require("lazy").setup({
   { "folke/tokyonight.nvim" },
 
   -- Interface e Status
-  { "nvim-tree/nvim-tree.lua", dependencies = { "nvim-tree/nvim-web-devicons" } },
+  -- NvimTree com bordas flutuantes
+  {
+    'nvim-tree/nvim-tree.lua',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require("nvim-tree").setup({
+        view = {
+          float = {
+            enable = true,
+            open_win_config = {
+              relative = "editor",
+              border = "rounded",
+              width = 35,
+              height = 30,
+              row = 1,
+              col = 1,
+            },
+          },
+        },
+      })
+    end
+  },
+
+  -- Bufferline (barra de abas)
+  {
+    'akinsho/bufferline.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require("bufferline").setup{
+        options = {
+          mode = "buffers",
+          separator_style = "slant",
+          diagnostics = "nvim_lsp",
+          offsets = {
+            { filetype = "NvimTree", text = "File Explorer", highlight = "Directory", separator = true },
+          },
+        },
+      }
+    end
+  },
+
+  -- Dashboard
+  {
+    'nvimdev/dashboard-nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('dashboard').setup({
+        theme = 'doom',
+        config = {
+          header = {
+            '███╗   ██╗██╗   ██╗██╗███╗   ███╗',
+            '████╗  ██║██║   ██║██║████╗ ████║',
+            '██╔██╗ ██║██║   ██║██║██╔████╔██║',
+            '██║╚██╗██║╚██╗ ██╔╝██║██║╚██╔╝██║',
+            '██║ ╚████║ ╚████╔╝ ██║██║ ╚═╝ ██║',
+            '╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚═╝     ╚═╝',
+          },
+          center = {
+            { icon = '  ', desc = 'Novo Arquivo', action = 'enew' },
+            { icon = '  ', desc = 'Buscar Arquivo', action = 'Telescope find_files' },
+            { icon = '  ', desc = 'Buscar Texto', action = 'Telescope live_grep' },
+            { icon = '  ', desc = 'Atalhos', action = 'WhichKey' },
+          },
+        },
+      })
+    end
+  },
+
+  -- Which-Key para mostrar todos os atalhos
+  {
+    "folke/which-key.nvim",
+    config = function()
+      require("which-key").setup({})
+      require("which-key").register({
+        ["<leader>d"] = { name = "Debug", c = "Continuar", t = "Breakpoint", u = "UI" },
+        ["<leader>f"] = { name = "Arquivo", f = "Buscar Arquivo", r = "Recentes" },
+      })
+    end,
+    event = "VeryLazy"
+  },
   { "nvim-lualine/lualine.nvim" },
   { "lewis6991/gitsigns.nvim" },
   { "andweeb/presence.nvim" },
@@ -174,6 +254,50 @@ vim.keymap.set("n", "<leader>fg", builtin.live_grep)
 vim.keymap.set("n", "<leader>fb", builtin.buffers)
 vim.keymap.set("n", "<leader>fh", builtin.help_tags)
 
+--------------------------
+-- Criar Arquivo
+--------------------------
+vim.keymap.set("n", "<leader>n", function()
+  local nome = vim.fn.input("Nome do novo arquivo: ")
+  if nome ~= "" then
+    vim.cmd("edit " .. nome)
+  end
+end, { desc = "Criar novo arquivo" })
+
+---------------------------
+-- Renomear Arquivo
+---------------------------
+vim.keymap.set("n", "<leader>m", function()
+  local antigo = vim.fn.expand("%")
+  local novo = vim.fn.input("Novo nome: ", antigo)
+  if novo ~= "" and novo ~= antigo then
+    vim.cmd("saveas " .. novo)
+    vim.fn.delete(antigo)
+    vim.cmd("bdelete #")
+    print("Renomeado para " .. novo)
+  end
+end, { desc = "Renomear arquivo atual" })
+
+-- Mover linhas estilo VSCode
+vim.keymap.set("n", "<A-j>", ":m .+1<CR>==")
+vim.keymap.set("n", "<A-k>", ":m .-2<CR>==")
+vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv")
+
+-- Copiar linha atual
+vim.keymap.set("n", "<C-d>", "yyP")
+
+-- Borda arredondada para LSP (hover e signature)
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+  vim.lsp.handlers.hover,
+  { border = "rounded" }
+)
+
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+  vim.lsp.handlers.signature_help,
+  { border = "rounded" }
+)
+
 ---------------------------
 -- 10. Remaps clássicos
 ---------------------------
@@ -186,12 +310,12 @@ vim.keymap.set("n", "<leader>q", ":q<CR>")
 vim.keymap.set("n", "<C-a>", ":NvimTreeToggle<CR>")
 vim.keymap.set("n", "<leader>x", ":x<CR>")
 vim.keymap.set("n", "<leader>/", "gcc", { remap = true })
-vim.keymap.set("n", "<leader>rt", ":vsplit | terminal python3 %<CR>", { desc = "Rodar Python em terminal separado" })
+vim.keymap.set("n", "<leader>rt", ":vsplit | terminal python3 '%'<CR>", { desc = "Rodar Python em terminal separado" })
 vim.keymap.set("n", "<leader>tt", ":split | terminal<CR>", { desc = "Abrir terminal abaixo" })
 
 ---------------------------
 -- Debug corrigido
---------------------------
+---------------------------
 
 local dap = require('dap')
 
