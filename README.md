@@ -6,6 +6,6 @@ eu deixei as categorias separadas por comentários, então não se preocupe ao f
 ## configurar✍️
 então para baixar é bem simples, basta você digitar no seu terminal:
 ```bash
-git clone https://github.com/TheRake066/config-ide-Nvim/init.lua
+curl -O https://github.com/TheRake066/config-ide-Nvim/blob/main/init.lua
 ```
 a segunda opção é baixar ou copiar o código direto daqui, será que ficou claro?
