@@ -13,12 +13,12 @@ a segunda opção é baixar ou copiar o código direto daqui, será que ficou cl
 ### Instalação?
 a instalação é simples se você já sabe mexer ou já usa o NeoVim, basta adicionar o arquivo nessa pasta caso seja Distro Linux:
 ```bash
-~/.config/mvim/
+~/.config/nvim/
 ```
 Se o init.lua estiver na pasta **Download** basta fazer o seguinte comando:
 ```bash
 # já dentro do diretório download
-cp init.lua ~/.config/mvim/
+cp init.lua ~/.config/nvim/
 
 ```
 o resto tu se virá 😜
