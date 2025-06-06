@@ -1,5 +1,4 @@
--- Minha NeoVim Config (init.lua)
--- Estilo IDE moderna, rápido e atualizada
+-- O Rake's NeoVim Config (init.lua)
 
 ---------------------------
 -- 1. Gerenciador: Lazy.nvim
@@ -72,6 +71,19 @@ require("lazy").setup({
         theme = 'doom',
         config = {
           header = {
+            ' ',
+            ' ',
+            ' ',
+            ' ',
+            ' ',
+            ' ',
+            ' ',
+            ' ',
+            ' ',
+            ' ',
+            ' ',
+            ' ',
+            ' ',
             '███╗   ██╗██╗   ██╗██╗███╗   ███╗',
             '████╗  ██║██║   ██║██║████╗ ████║',
             '██╔██╗ ██║██║   ██║██║██╔████╔██║',
@@ -131,7 +143,7 @@ require("lazy").setup({
   -- Autopairs
   { "windwp/nvim-autopairs" },
 })
-
+  
 ---------------------------
 -- 2. Aparência
 ---------------------------
@@ -150,6 +162,18 @@ vim.o.autoindent = true
 vim.o.clipboard = "unnamedplus"
 vim.o.encoding = "utf-8"
 vim.o.background = "dark"
+vim.o.updatetime = 50
+vim.diagnostic.config({
+  virtual_text = false,
+  signs = true,
+  underline = true,
+  update_in_insert = true,
+  severity_sort = true,
+  float = {
+    source = "always",
+    border = "rounded",
+  },
+})
 
 ---------------------------
 -- 4. Plugins de Interface
@@ -171,7 +195,85 @@ local lspconfig = require("lspconfig")
 local cmp = require("cmp")
 
 -- Ativa LSP do Python com pyright
-lspconfig.pyright.setup({})
+lspconfig.pyright.setup({
+  on_attach = function(client, bufnr)
+    local last_errors = 0
+    local popup_open = false
+    
+    local check_line = function()
+      local line_nr = vim.api.nvim_win_get_cursor(0)[1] - 1
+      local diags = vim.diagnostic.get(bufnr, { lnum = line_nr })
+      local current_errors = #diags
+      
+      -- Se aparecer um NOVO erro
+      if current_errors > 0 and (last_errors == 0 or not popup_open) then
+        vim.diagnostic.open_float({
+          focusable = false,
+          close_events = { "BufLeave", "CursorMoved", "InsertEnter", "TextChangedI" },
+          border = 'rounded',
+          source = 'always',
+          prefix = ' ',
+        })
+        popup_open = true
+      
+      -- Se TODOS os erros foram corrigidos
+      elseif current_errors == 0 and popup_open then
+        vim.diagnostic.hide()
+        popup_open = false
+      end
+      
+      last_errors = current_errors
+    end
+
+    -- Dispara em TODAS as situações relevantes
+    vim.api.nvim_create_autocmd({"TextChangedI", "InsertLeave", "CursorHold"}, {
+      buffer = bufnr,
+      callback = check_line
+    })
+    
+    vim.diagnostic.config({
+  virtual_text = false, -- não mostrar erro na linha
+  signs = true,         -- mostra na lateral esquerda
+  underline = true,     -- sublinha erro
+  update_in_insert = true, -- <- ESSENCIAL PRA FUNCIONAR ENQUANTO DIGITA
+  severity_sort = true,
+  float = {
+    source = "always", -- mostra de onde vem o erro
+    border = "rounded",
+  },
+})
+    
+vim.o.updatetime = 250
+
+-- Ativa o popup automaticamente durante o insert (modo insert)
+vim.api.nvim_create_autocmd({ "TextChangedI", "TextChangedP" }, {
+  callback = function()
+    local diagnostics = vim.diagnostic.get()
+    if diagnostics and #diagnostics > 0 then
+      vim.diagnostic.open_float(nil, { focus = false })
+    end
+  end,
+})
+
+-- Oculta o popup se não houver mais erro (ex: após corrigir)
+vim.api.nvim_create_autocmd("InsertLeave", {
+  callback = function()
+    vim.diagnostic.hide()
+  end,
+})
+    
+    -- Força uma verificação inicial
+    check_line()
+  end,
+  settings = {
+    python = {
+      analysis = {
+        diagnosticMode = "openFilesOnly",
+        typeCheckingMode = "basic"
+      }
+    }
+  }
+})
 
 -- Autocomplete com LuaSnip
 cmp.setup({
@@ -336,6 +438,17 @@ dap.configurations.python = {
     end,
   },
 }
+
+-- === Comando Personalizado: Menu de Atalhos Hacker ===
+vim.api.nvim_create_user_command("MenuHacker", function()
+  vim.cmd("echo '📁  Arquivos: <leader>ff (buscar), <leader>fr (recentes)'")
+  vim.cmd("echo '🐍  Debug: <leader>dc (continuar), <leader>dt (breakpoint), <leader>du (interface)'")
+  vim.cmd("echo '🧠  Movimento: Alt + j/k (mover linhas), Ctrl + d (copiar)'")
+  vim.cmd("echo '🔍  Telescope: <leader>f* para busca e arquivos'")
+  vim.cmd("echo '📦  Plugin: :Lazy, :Mason, :TSUpdate'")
+end, {})
+
+-- Dica: digite :MenuHacker para ver os comandos principais
 
 ---------------------------
 -- Fim da configuração
