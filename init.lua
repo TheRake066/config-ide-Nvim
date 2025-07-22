@@ -1,4 +1,5 @@
--- O Rake's NeoVim Config (init.lua)
+-- The Rake's NeoVim Config (init.lua)
+-- atualidado 22/07/25
 
 ---------------------------
 -- 1. Gerenciador: Lazy.nvim
@@ -15,9 +16,81 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+------------------------------------------------------------
+-- Seletor de Temas Automático
+local theme_selector = function()
+  local themes = {
+    "gruvbox",
+    "nord",
+    "onedarkpro",
+    "dracula",
+    "solarized-dark",
+    "tokyonight",
+    "catppuccin",
+    "solarized-light"
+  }
+
+  vim.ui.select(
+    themes,
+    { prompt = "Escolha seu tema:" },
+    function(choice)
+      if choice then
+        -- Comenta/remove configurações de tema existentes que podem conflitar
+        vim.cmd("highlight clear") -- Limpa highlights anteriores
+
+        -- Configurações específicas para cada tema
+        if choice == "gruvbox" then
+          vim.cmd("colorscheme gruvbox")
+        elseif choice == "nord" then
+          vim.cmd("colorscheme nord")
+        elseif choice == "onedarkpro" then
+          vim.cmd("colorscheme onedarkpro")
+        elseif choice == "dracula" then
+          vim.cmd("colorscheme dracula")
+        elseif choice == "solarized-dark" then
+          vim.cmd("colorscheme solarized")
+          vim.o.background = "dark"
+        elseif choice == "tokyonight" then
+          require("tokyonight").setup({
+            style = "storm", -- storm, night, moon
+            transparent = true,
+          })
+          vim.cmd("colorscheme tokyonight")
+        elseif choice == "catppuccin" then
+          require("catppuccin").setup({
+            flavour = "frappe", -- latte, frappe, macchiato, mocha
+          })
+          vim.cmd("colorscheme catppuccin")
+        elseif choice == "solarized-light" then
+          vim.cmd("colorscheme solarized")
+          vim.o.background = "dark"
+        end
+
+        -- Aplica personalizações comuns
+        vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+      end
+    end
+  )
+end
+
+-- Chama o seletor ao iniciar (comente esta linha se quiser controle manual)
+vim.schedule(function()
+  theme_selector()
+end)
+
+---------------------------------------------------------------------------
+
 require("lazy").setup({
-  -- Temas
+
+  { "ellisonleao/gruvbox.nvim" },
+  { "shaunsingh/nord.nvim" },
+  { "olimorris/onedarkpro.nvim" },
+  { "dracula/vim", name = "dracula" },
+  { "altercation/vim-colors-solarized" },
   { "folke/tokyonight.nvim" },
+  { "catppuccin/nvim", name = "catppuccin" },
+  -- Temas
 
   -- Interface e Status
   -- NvimTree com bordas flutuantes
@@ -42,8 +115,85 @@ require("lazy").setup({
       })
     end
   },
-
+  -- Presence Discord
+  {
+    "andweeb/presence.nvim",
+    config=function()
+     require("presence").setup({
+      auto_update = true,
+      -- Coloque seu nome abaixo
+      neovim_image_text = "Mr.<your-name> codando no Neovim",
+      main_image = "neovim",
+      client_id = "793271441293967371",
+      log_level = nil,
+      debounce_timeout = 10,
+      enable_line_number = false,
+      blacklist = {},
+      buttons = true,
+      file_assets = {},
+      show_time = true,
+  
+      -- Texto Customizado
+      editing_text = "Codando %s",
+      file_explorer_text = "Navegando Arquivos",
+      git_commit_text = "Fazendo commit",
+      plugin_manager_text = "Gerenciando plugins...",
+      reading_text = "Lendo %s",
+      workspace_text = "Trabalhando em %s",
+      line_number_text = "Linha %s de %s",
+    })
+    end
+  },
   -- Bufferline (barra de abas)
+    -- tema abaixo 
+  {
+    "navarasu/onedark.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require("onedark").setup {
+        style = "warm", -- você pode usar "dark", "darker", "cool", "deep", "warm", "warmer"
+        transparent = true,
+        term_colors = true,
+        code_style = {
+          comments = "italic",
+          keywords = "bold",
+          functions = "bold",
+          strings = "none",
+          variables = "italic",
+        },
+    }
+      --------------------------------------------------------------------------------------
+      -- ATENÇÃO!
+      -- Essa configuração abaixo é configurada e não vai ser aplicada!
+      -- Caso queira usar, comente a parte aonde escolhe o tema...
+      -- Não recomendo usar essa parte
+      require("onedark").load()
+      -- 🎨 Custom highlights para syntax (Treesitter)
+      vim.api.nvim_set_hl(0, "@keyword", { fg = "#e06c75" })
+      vim.api.nvim_set_hl(0, "@string", { fg = "#ffdc00" })
+      vim.api.nvim_set_hl(0, "@comment", { fg = "#5c6370", italic = true })
+      vim.api.nvim_set_hl(0, "@keyword.import", { fg = "#fa6363", bold = true }) -- vermelho
+      vim.api.nvim_set_hl(0, "@keyword.function", { fg = "#fa6363", bold = true }) -- vermelho
+      vim.api.nvim_set_hl(0, "@keyword.conditional", { fg = "#fa6363", bold = true }) -- vermelho
+      vim.api.nvim_set_hl(0, "@keyword.repeat", { fg = "#fa6363", bold = true }) -- vermelho
+      vim.api.nvim_set_hl(0, "@keyword.operator", { fg = "#fa6363", bold = true }) -- vermelho
+      vim.api.nvim_set_hl(0, "@keyword.exception", { fg = "#fa6363", bold = true }) -- vermelho
+      vim.api.nvim_set_hl(0, "@variable", { fg = "#cdcdcd", italic = true }) -- branco
+      vim.api.nvim_set_hl(0, "@module", { fg = "#cdcdcd" }) -- branco
+      vim.api.nvim_set_hl(0, "@function.builtin", { fg = "#cdcdcd" }) -- branco
+      vim.api.nvim_set_hl(0, "@function", { fg = "#fecf5f" }) -- amarelo
+      vim.api.nvim_set_hl(0, "@number", { fg = "#c678dd" }) -- roxo
+      vim.api.nvim_set_hl(0, "@punctuation.bracket", { fg = "#a565b9" }) -- roxo
+      vim.api.nvim_set_hl(0, "@function.method", { fg = "#fecf5f" }) -- amarelo
+      vim.api.nvim_set_hl(0, "@type.builtin", { fg = "#83ffd1" }) -- azul claro
+      vim.api.nvim_set_hl(0, "@number.float", { fg = "#83ffd1" }) -- azul claro
+      vim.api.nvim_set_hl(0, "@string.escape", { fg = "#83ffd1" }) -- azul claro
+      vim.api.nvim_set_hl(0, "@boolean", { fg = "#008252" }) -- verde
+      end,
+  },
+----------------------------------------------------------------------------------
+  { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
   {
     'akinsho/bufferline.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
@@ -96,6 +246,7 @@ require("lazy").setup({
             { icon = '  ', desc = 'Buscar Arquivo', action = 'Telescope find_files' },
             { icon = '  ', desc = 'Buscar Texto', action = 'Telescope live_grep' },
             { icon = '  ', desc = 'Atalhos', action = 'WhichKey' },
+            { icon = '🎨  ', desc = 'Mudar Tema', action = function() theme_selector() end },
           },
         },
       })
@@ -116,7 +267,6 @@ require("lazy").setup({
   },
   { "nvim-lualine/lualine.nvim" },
   { "lewis6991/gitsigns.nvim" },
-  { "andweeb/presence.nvim" },
   { "folke/which-key.nvim" },
   { "nvim-neotest/nvim-nio" },
 
@@ -143,12 +293,31 @@ require("lazy").setup({
   -- Autopairs
   { "windwp/nvim-autopairs" },
 })
-  
+
+-- ESSA PARTE FOI COMENTADA POR NÃO SER MAIS USADA;
+-- APENAS DESCOMENTE SE QUISER O TEMA TOKYONIGHT;
+-- MAS NÃO RECOMENDO NOVAMENTE;
+
 ---------------------------
 -- 2. Aparência
 ---------------------------
-vim.cmd.colorscheme("tokyonight")
-vim.o.termguicolors = true
+
+-- Ativa termguicolors
+-- vim.o.termguicolors = true
+
+-- Tema
+-- require("tokyonight").setup({
+  -- transparent = true,
+  -- on_highlights = function(hl, c)
+    -- hl.NvimTreeNormal = { bg = "NONE" }
+    -- hl.NvimTreeNormalNC = { bg = "NONE" }
+    -- hl.NvimTreeEndOfBuffer = { bg = "NONE" }
+    -- hl.NvimTreeWinSeparator = { bg = "NONE", fg = "NONE" }
+    -- hl.NvimTreeVertSplit = { bg = "NONE", fg = "NONE" }
+  -- end,
+-- })
+
+-- vim.cmd.colorscheme("tokyonight")
 
 ---------------------------
 -- 3. Básico
@@ -183,10 +352,10 @@ require("nvim-tree").setup()
 require("gitsigns").setup()
 require("which-key").setup {}
 require("nvim-autopairs").setup {}
-require("presence").setup {
-  neovim_image_text = "Mr. Sidney codando no Neovim",
-  main_image = "file",
-}
+
+
+
+vim.o.termguicolors = true
 
 ---------------------------
 -- 5. LSP e Autocompletar
@@ -232,7 +401,11 @@ lspconfig.pyright.setup({
     })
     
     vim.diagnostic.config({
-  virtual_text = false, -- não mostrar erro na linha
+  virtual_text = {
+   prefix = "--➔ ",
+   spacing = 2,
+   source = "always",
+  }, -- não mostrar erro na linha
   signs = true,         -- mostra na lateral esquerda
   underline = true,     -- sublinha erro
   update_in_insert = true, -- <- ESSENCIAL PRA FUNCIONAR ENQUANTO DIGITA
@@ -343,7 +516,10 @@ vim.keymap.set('n', '<leader>db', function() require'dap'.toggle_breakpoint() en
 -- 8. Treesitter
 ---------------------------
 require("nvim-treesitter.configs").setup({
-  highlight = { enable = true },
+  highlight = { 
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
   indent = { enable = true },
 })
 
@@ -411,8 +587,9 @@ vim.keymap.set("n", "<leader>w", ":w<CR>")
 vim.keymap.set("n", "<leader>q", ":q<CR>")
 vim.keymap.set("n", "<C-a>", ":NvimTreeToggle<CR>")
 vim.keymap.set("n", "<leader>x", ":x<CR>")
-vim.keymap.set("n", "<leader>/", "gcc", { remap = true })
+vim.keymap.set("n", "<leader>mm", "gcc", { remap = true })
 vim.keymap.set("n", "<leader>rt", ":vsplit | terminal python3 '%'<CR>", { desc = "Rodar Python em terminal separado" })
+vim.keymap.set("n", "<leader>rf", ":vsplit | terminal flet run '%'<CR>", { desc = "Rodar Flet em terminal separado" })
 vim.keymap.set("n", "<leader>tt", ":split | terminal<CR>", { desc = "Abrir terminal abaixo" })
 
 ---------------------------
@@ -441,11 +618,13 @@ dap.configurations.python = {
 
 -- === Comando Personalizado: Menu de Atalhos Hacker ===
 vim.api.nvim_create_user_command("MenuHacker", function()
-  vim.cmd("echo '📁  Arquivos: <leader>ff (buscar), <leader>fr (recentes)'")
+  vim.cmd("echo '🔍️  Telecospe: <leader>ff (buscar), <leader>fr (recentes), <leader>fg (buscar texto)'")
   vim.cmd("echo '🐍  Debug: <leader>dc (continuar), <leader>dt (breakpoint), <leader>du (interface)'")
   vim.cmd("echo '🧠  Movimento: Alt + j/k (mover linhas), Ctrl + d (copiar)'")
-  vim.cmd("echo '🔍  Telescope: <leader>f* para busca e arquivos'")
   vim.cmd("echo '📦  Plugin: :Lazy, :Mason, :TSUpdate'")
+  vim.cmd("echo '🖥️  Terminal: <leader>tt (abre terminal)'")
+  vim.cmd("echo '💥  Python: <leader>rt (roda codigo python), <leader>rf (roda codigo flet)'")
+  vim.cmd("echo '📂  Arquivo: <leader>w (salva), <leader>x (salvar e sair), <leader>q (sair), <leader>mm (comentar na linha)'")
 end, {})
 
 -- Dica: digite :MenuHacker para ver os comandos principais
