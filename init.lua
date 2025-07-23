@@ -1,5 +1,5 @@
--- The Rake's NeoVim Config (init.lua)
--- atualidado 22/07/25
+-- O Rake's NeoVim Config (init.lua)
+-- atualizado 23/07/25
 
 ---------------------------
 -- 1. Gerenciador: Lazy.nvim
@@ -16,7 +16,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-------------------------------------------------------------
 -- Seletor de Temas Automático
 local theme_selector = function()
   local themes = {
@@ -58,7 +57,7 @@ local theme_selector = function()
           vim.cmd("colorscheme tokyonight")
         elseif choice == "catppuccin" then
           require("catppuccin").setup({
-            flavour = "frappe", -- latte, frappe, macchiato, mocha
+            flavour = "mocha", -- latte, frappe, macchiato, mocha
           })
           vim.cmd("colorscheme catppuccin")
         elseif choice == "solarized-light" then
@@ -78,8 +77,6 @@ end
 vim.schedule(function()
   theme_selector()
 end)
-
----------------------------------------------------------------------------
 
 require("lazy").setup({
 
@@ -121,8 +118,7 @@ require("lazy").setup({
     config=function()
      require("presence").setup({
       auto_update = true,
-      -- Coloque seu nome abaixo
-      neovim_image_text = "Mr.<your-name> codando no Neovim",
+      neovim_image_text = "Mr. Sidney codando no Neovim",
       main_image = "neovim",
       client_id = "793271441293967371",
       log_level = nil,
@@ -163,11 +159,6 @@ require("lazy").setup({
           variables = "italic",
         },
     }
-      --------------------------------------------------------------------------------------
-      -- ATENÇÃO!
-      -- Essa configuração abaixo é configurada e não vai ser aplicada!
-      -- Caso queira usar, comente a parte aonde escolhe o tema...
-      -- Não recomendo usar essa parte
       require("onedark").load()
       -- 🎨 Custom highlights para syntax (Treesitter)
       vim.api.nvim_set_hl(0, "@keyword", { fg = "#e06c75" })
@@ -192,7 +183,7 @@ require("lazy").setup({
       vim.api.nvim_set_hl(0, "@boolean", { fg = "#008252" }) -- verde
       end,
   },
-----------------------------------------------------------------------------------
+
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
   {
     'akinsho/bufferline.nvim',
@@ -276,6 +267,8 @@ require("lazy").setup({
   { "hrsh7th/cmp-nvim-lsp" },
   { "L3MON4D3/LuaSnip" },
   { "saadparwaiz1/cmp_luasnip" },
+  { "hrsh7th/cmp-buffer" },
+  { "hrsh7th/cmp-path" },
 
   -- Formatação e Lint
   { "nvimtools/none-ls.nvim" },
@@ -293,11 +286,7 @@ require("lazy").setup({
   -- Autopairs
   { "windwp/nvim-autopairs" },
 })
-
--- ESSA PARTE FOI COMENTADA POR NÃO SER MAIS USADA;
--- APENAS DESCOMENTE SE QUISER O TEMA TOKYONIGHT;
--- MAS NÃO RECOMENDO NOVAMENTE;
-
+  
 ---------------------------
 -- 2. Aparência
 ---------------------------
@@ -347,9 +336,47 @@ vim.diagnostic.config({
 ---------------------------
 -- 4. Plugins de Interface
 ---------------------------
-require("lualine").setup()
+require("lualine").setup({
+  options = {
+    theme = "auto", -- Sincroniza com o tema atual
+    section_separators = { left = '', right = '' },
+    component_separators = { left = '', right = '' },
+  },
+  sections = {
+    lualine_a = { 'mode' },
+    lualine_b = { 'branch', 'diff', 'diagnostics' },
+    lualine_c = { 
+      { 'filename', path = 1 }, -- Mostra caminho relativo
+      { 
+        function()
+          local venv = os.getenv("VIRTUAL_ENV")
+          if venv then
+            return "venv: " .. vim.fn.fnamemodify(venv, ":t")
+          end
+          return ""
+        end,
+        icon = "🐍",
+      },
+    },
+    lualine_x = { 'encoding', 'fileformat', 'filetype' },
+    lualine_y = { 'progress' },
+    lualine_z = { 'location' },
+  },
+})
+
 require("nvim-tree").setup()
-require("gitsigns").setup()
+require("gitsigns").setup({
+  signs = {
+    add = { text = '+' },
+    change = { text = '~' },
+    delete = { text = '_' },
+  },
+  on_attach = function(bufnr)
+    local gs = package.loaded.gitsigns
+    vim.keymap.set('n', '<leader>gp', gs.preview_hunk, { buffer = bufnr, desc = 'Preview Git Hunk' })
+    vim.keymap.set('n', '<leader>gb', gs.blame_line, { buffer = bufnr, desc = 'Git Blame Line' })
+  end,
+})
 require("which-key").setup {}
 require("nvim-autopairs").setup {}
 
@@ -366,71 +393,57 @@ local cmp = require("cmp")
 -- Ativa LSP do Python com pyright
 lspconfig.pyright.setup({
   on_attach = function(client, bufnr)
-    local last_errors = 0
-    local popup_open = false
-    
-    local check_line = function()
-      local line_nr = vim.api.nvim_win_get_cursor(0)[1] - 1
-      local diags = vim.diagnostic.get(bufnr, { lnum = line_nr })
-      local current_errors = #diags
-      
-      -- Se aparecer um NOVO erro
-      if current_errors > 0 and (last_errors == 0 or not popup_open) then
-        vim.diagnostic.open_float({
-          focusable = false,
-          close_events = { "BufLeave", "CursorMoved", "InsertEnter", "TextChangedI" },
-          border = 'rounded',
-          source = 'always',
-          prefix = ' ',
-        })
-        popup_open = true
-      
-      -- Se TODOS os erros foram corrigidos
-      elseif current_errors == 0 and popup_open then
-        vim.diagnostic.hide()
-        popup_open = false
-      end
-      
-      last_errors = current_errors
-    end
+    local capabilities = require('cmp_nvim_lsp').default_capabilities()
+    client.server_capabilities = vim.tbl_deep_extend("force", client.server_capabilities, capabilities)
+  end,
+  })
+   
+    -- Configuração global de diagnósticos
+vim.diagnostic.config({
+  virtual_text = false, -- Desativa texto na linha
+  signs = true,         -- Mostra sinais na lateral
+  underline = true,     -- Sublinha erros
+  update_in_insert = true, -- Atualiza em modo insert
+  severity_sort = true,
+  float = {
+    source = "always",
+    border = "rounded",
+    focusable = false,
+  },
+})
 
-    -- Dispara em TODAS as situações relevantes
-    vim.api.nvim_create_autocmd({"TextChangedI", "InsertLeave", "CursorHold"}, {
-      buffer = bufnr,
-      callback = check_line
-    })
-    
-vim.o.updatetime = 250
-
--- Ativa o popup automaticamente durante o insert (modo insert)
-vim.api.nvim_create_autocmd({ "TextChangedI", "TextChangedP" }, {
+-- Popup automático com CursorHold
+vim.api.nvim_create_autocmd("CursorHold", {
   callback = function()
-    local diagnostics = vim.diagnostic.get()
-    if diagnostics and #diagnostics > 0 then
-      vim.diagnostic.open_float(nil, { focus = false })
+    local diagnostics = vim.diagnostic.get(0, { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1 })
+    if #diagnostics > 0 then
+      vim.diagnostic.open_float(nil, {
+        focusable = false,
+        close_events = { "BufLeave", "CursorMoved", "InsertEnter", "TextChangedI" },
+        border = "rounded",
+        source = "always",
+        prefix = " ",
+      })
     end
   end,
 })
 
--- Oculta o popup se não houver mais erro (ex: após corrigir)
+-- Oculta popup ao sair do modo insert
 vim.api.nvim_create_autocmd("InsertLeave", {
   callback = function()
     vim.diagnostic.hide()
   end,
 })
-    
-    -- Força uma verificação inicial
-    check_line()
+
+lspconfig.clangd.setup({
+  on_attach = function(client, bufnr)
+   local capabilities = require('cmp_nvim_lsp').default_capabilities()
+   client.server_capabilities = vim.tbl_deep_extend("force", client.server_capabilities, capabilities)
   end,
-  settings = {
-    python = {
-      analysis = {
-        diagnosticMode = "openFilesOnly",
-        typeCheckingMode = "basic"
-      }
-    }
-  }
+  capabilities = require('cmp_nvim_lsp').default_capabilities(),
 })
+
+vim.o.updatetime = 250
 
 -- Autocomplete com LuaSnip
 cmp.setup({
@@ -443,11 +456,50 @@ cmp.setup({
     ['<Tab>'] = cmp.mapping.select_next_item(),
     ['<S-Tab>'] = cmp.mapping.select_prev_item(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<C-Space>'] = cmp.mapping.complete(), -- Abre o menu de autocompletar
+    ['<C-e>'] = cmp.mapping.close(),       -- Fecha o menu
   }),
   sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
+    { name = 'nvim_lsp', priority = 1000 }, -- Prioridade alta para LSP
+    { name = 'luasnip', priority = 750 },   -- Snippets
+    { name = 'buffer', priority = 500 },    -- Palavras do buffer
+    { name = 'path', priority = 250 },      -- Caminhos de arquivos
   },
+  formatting = {
+    format = function(entry, vim_item)
+      vim_item.menu = ({
+        nvim_lsp = "[LSP]",
+        luasnip = "[Snippet]",
+        buffer = "[Buffer]",
+        path = "[Path]",
+      })[entry.source.name]
+      return vim_item
+    end,
+  },
+})
+
+require("luasnip").add_snippets("python", {
+  -- Snippet para print com f-string
+  require("luasnip").snippet("pf", {
+    require("luasnip").text_node("print(f\""),
+    require("luasnip").insert_node(1, "variavel"),
+    require("luasnip").text_node("\")"),
+  }),
+  -- Snippet para função
+  require("luasnip").snippet("def", {
+    require("luasnip").text_node("def "),
+    require("luasnip").insert_node(1, "nome_funcao"),
+    require("luasnip").text_node("("),
+    require("luasnip").insert_node(2, "parametros"),
+    require("luasnip").text_node("):"),
+    require("luasnip").text_node({ "", "    " }),
+    require("luasnip").insert_node(0),
+  }),
+  -- Snippet para if __name__ == "__main__":
+  require("luasnip").snippet("ifmain", {
+    require("luasnip").text_node({ "if __name__ == \"__main__\":", "    " }),
+    require("luasnip").insert_node(0),
+  }),
 })
 
 ---------------------------
@@ -575,6 +627,8 @@ vim.keymap.set("n", "<leader>mm", "gcc", { remap = true })
 vim.keymap.set("n", "<leader>rt", ":vsplit | terminal python3 '%'<CR>", { desc = "Rodar Python em terminal separado" })
 vim.keymap.set("n", "<leader>rf", ":vsplit | terminal flet run '%'<CR>", { desc = "Rodar Flet em terminal separado" })
 vim.keymap.set("n", "<leader>tt", ":split | terminal<CR>", { desc = "Abrir terminal abaixo" })
+vim.keymap.set("n", "<leader>rc", ":vsplit | terminal g++ '%' -o '%<' && ./'%<'<CR>", { desc = "Rodar C++ em terminal separado"})
+vim.keymap.set("n", "<leader>rj", ":vsplit | terminal javac '%' && java '%:r'<CR>", { desc = "Rodar Java em terminal separado"})
 
 ---------------------------
 -- Debug corrigido
@@ -599,16 +653,13 @@ dap.configurations.python = {
     end,
   },
 }
-
 -- === Comando Personalizado: Menu de Atalhos Hacker ===
 vim.api.nvim_create_user_command("MenuHacker", function()
-  vim.cmd("echo '🔍️  Telecospe: <leader>ff (buscar), <leader>fr (recentes), <leader>fg (buscar texto)'")
+  vim.cmd("echo '📁  Arquivos: <leader>ff (buscar), <leader>fr (recentes)'")
   vim.cmd("echo '🐍  Debug: <leader>dc (continuar), <leader>dt (breakpoint), <leader>du (interface)'")
   vim.cmd("echo '🧠  Movimento: Alt + j/k (mover linhas), Ctrl + d (copiar)'")
+  vim.cmd("echo '🔍  Telescope: <leader>f* para busca e arquivos'")
   vim.cmd("echo '📦  Plugin: :Lazy, :Mason, :TSUpdate'")
-  vim.cmd("echo '🖥️  Terminal: <leader>tt (abre terminal)'")
-  vim.cmd("echo '💥  Python: <leader>rt (roda codigo python), <leader>rf (roda codigo flet)'")
-  vim.cmd("echo '📂  Arquivo: <leader>w (salva), <leader>x (salvar e sair), <leader>q (sair), <leader>mm (comentar na linha)'")
 end, {})
 
 -- Dica: digite :MenuHacker para ver os comandos principais
