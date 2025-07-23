@@ -400,22 +400,6 @@ lspconfig.pyright.setup({
       callback = check_line
     })
     
-    vim.diagnostic.config({
-  virtual_text = {
-   prefix = "--➔ ",
-   spacing = 2,
-   source = "always",
-  }, -- não mostrar erro na linha
-  signs = true,         -- mostra na lateral esquerda
-  underline = true,     -- sublinha erro
-  update_in_insert = true, -- <- ESSENCIAL PRA FUNCIONAR ENQUANTO DIGITA
-  severity_sort = true,
-  float = {
-    source = "always", -- mostra de onde vem o erro
-    border = "rounded",
-  },
-})
-    
 vim.o.updatetime = 250
 
 -- Ativa o popup automaticamente durante o insert (modo insert)
