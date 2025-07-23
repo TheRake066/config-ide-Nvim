@@ -63,7 +63,7 @@ local theme_selector = function()
           vim.cmd("colorscheme catppuccin")
         elseif choice == "solarized-light" then
           vim.cmd("colorscheme solarized")
-          vim.o.background = "dark"
+          vim.o.background = "light"
         end
 
         -- Aplica personalizações comuns
