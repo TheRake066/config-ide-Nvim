@@ -1,6 +1,5 @@
 -- O Rake's NeoVim Config (init.lua)
--- atualizado 23/07/25
-
+-- atualizado 05/08/25
 ---------------------------
 -- 1. Gerenciador: Lazy.nvim
 ---------------------------
@@ -17,6 +16,41 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Seletor de Temas Automático
+local theme_file = vim.fn.stdpath("data") .. "/theme.txt"
+local function load_theme()
+  if vim.fn.filereadable(theme_file) == 1 then
+    local theme = vim.fn.readfile(theme_file)[1]
+    if theme then
+      vim.cmd("highlight clear")
+      if theme == "gruvbox" then
+        vim.cmd("colorscheme gruvbox")
+      elseif theme == "nord" then
+        vim.cmd("colorscheme nord")
+      elseif theme == "onedarkpro" then
+        vim.cmd("colorscheme onedarkpro")
+      elseif theme == "dracula" then
+        vim.cmd("colorscheme dracula")
+      elseif theme == "solarized-dark" then
+        vim.cmd("colorscheme solarized")
+        vim.o.background = "dark"
+      elseif theme == "tokyonight" then
+        require("tokyonight").setup({ style = "storm", transparent = true })
+        vim.cmd("colorscheme tokyonight")
+      elseif theme == "catppuccin" then
+        require("catppuccin").setup({ flavour = "mocha" })
+        vim.cmd("colorscheme catppuccin")
+      elseif theme == "solarized-light" then
+        vim.cmd("colorscheme solarized")
+        vim.o.background = "light"
+      end
+      vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+      vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+    end
+  else
+    theme_selector()
+  end
+end
+
 local theme_selector = function()
   local themes = {
     "gruvbox",
@@ -29,54 +63,38 @@ local theme_selector = function()
     "solarized-light"
   }
 
-  vim.ui.select(
-    themes,
-    { prompt = "Escolha seu tema:" },
-    function(choice)
-      if choice then
-        -- Comenta/remove configurações de tema existentes que podem conflitar
-        vim.cmd("highlight clear") -- Limpa highlights anteriores
-
-        -- Configurações específicas para cada tema
-        if choice == "gruvbox" then
-          vim.cmd("colorscheme gruvbox")
-        elseif choice == "nord" then
-          vim.cmd("colorscheme nord")
-        elseif choice == "onedarkpro" then
-          vim.cmd("colorscheme onedarkpro")
-        elseif choice == "dracula" then
-          vim.cmd("colorscheme dracula")
-        elseif choice == "solarized-dark" then
-          vim.cmd("colorscheme solarized")
-          vim.o.background = "dark"
-        elseif choice == "tokyonight" then
-          require("tokyonight").setup({
-            style = "storm", -- storm, night, moon
-            transparent = true,
-          })
-          vim.cmd("colorscheme tokyonight")
-        elseif choice == "catppuccin" then
-          require("catppuccin").setup({
-            flavour = "mocha", -- latte, frappe, macchiato, mocha
-          })
-          vim.cmd("colorscheme catppuccin")
-        elseif choice == "solarized-light" then
-          vim.cmd("colorscheme solarized")
-          vim.o.background = "light"
-        end
-
-        -- Aplica personalizações comuns
-        vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+  vim.ui.select(themes, { prompt = "Escolha seu tema:" }, function(choice)
+    if choice then
+      vim.cmd("highlight clear")
+      if choice == "gruvbox" then
+        vim.cmd("colorscheme gruvbox")
+      elseif choice == "nord" then
+        vim.cmd("colorscheme nord")
+      elseif choice == "onedarkpro" then
+        vim.cmd("colorscheme onedarkpro")
+      elseif choice == "dracula" then
+        vim.cmd("colorscheme dracula")
+      elseif choice == "solarized-dark" then
+        vim.cmd("colorscheme solarized")
+        vim.o.background = "dark"
+      elseif choice == "tokyonight" then
+        require("tokyonight").setup({ style = "storm", transparent = true })
+        vim.cmd("colorscheme tokyonight")
+      elseif theme == "catppuccin" then
+        require("catppuccin").setup({ flavour = "mocha" })
+        vim.cmd("colorscheme catppuccin")
+      elseif theme == "solarized-light" then
+        vim.cmd("colorscheme solarized")
+        vim.o.background = "light"
       end
+      vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+      vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+      vim.fn.writefile({ choice }, theme_file)
     end
-  )
+  end)
 end
 
--- Chama o seletor ao iniciar (comente esta linha se quiser controle manual)
-vim.schedule(function()
-  theme_selector()
-end)
+vim.schedule(load_theme)
 
 require("lazy").setup({
 
@@ -91,27 +109,31 @@ require("lazy").setup({
 
   -- Interface e Status
   -- NvimTree com bordas flutuantes
-  {
+   {
     'nvim-tree/nvim-tree.lua',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
-      require("nvim-tree").setup({
-        view = {
-          float = {
-            enable = true,
-            open_win_config = {
+     require("nvim-tree").setup({
+      view = {
+        float = {
+          enable = true,
+          open_win_config = function()
+            local screen_w = vim.opt.columns:get()
+            local screen_h = vim.opt.lines:get() - vim.opt.cmdheight:get()
+            return {
               relative = "editor",
               border = "rounded",
-              width = 35,
-              height = 30,
-              row = 1,
-              col = 1,
-            },
-          },
+              width = math.floor(screen_w * 0.3),
+              height = math.floor(screen_h * 0.8),
+              row = math.floor(screen_h * 0.1),
+              col = math.floor(screen_w * 0.05),
+            }
+          end,
         },
-      })
-    end
-  },
+      },
+    })
+  end
+},
   -- Presence Discord
   {
     "andweeb/presence.nvim",
@@ -629,6 +651,7 @@ vim.keymap.set("n", "<leader>rf", ":vsplit | terminal flet run '%'<CR>", { desc 
 vim.keymap.set("n", "<leader>tt", ":split | terminal<CR>", { desc = "Abrir terminal abaixo" })
 vim.keymap.set("n", "<leader>rc", ":vsplit | terminal g++ '%' -o '%<' && ./'%<'<CR>", { desc = "Rodar C++ em terminal separado"})
 vim.keymap.set("n", "<leader>rj", ":vsplit | terminal javac '%' && java '%:r'<CR>", { desc = "Rodar Java em terminal separado"})
+vim.keymap.set("n", "<leader>fmt", function() vim.lsp.buf.format() end, { desc = "Formatar arquivo com black/isort" })
 
 ---------------------------
 -- Debug corrigido
@@ -663,6 +686,15 @@ vim.api.nvim_create_user_command("MenuHacker", function()
 end, {})
 
 -- Dica: digite :MenuHacker para ver os comandos principais
+
+---------------------------
+-- 12. Indentação
+---------------------------
+-- Indetar com tab e desindentar com Shift+Tab
+vim.keymap.set("n","<Tab>",">>", { desc = "Indentar linha" })
+vim.keymap.set("n","<S-Tab>","<<", { desc = "Desidentar linha" })
+vim.keymap.set("v","<Tab>",">gv", { desc = "Indentar linha bloco" })
+vim.keymap.set("v","<S-Tab>","<gv", { desc = "Desidentar linha bloco" })
 
 ---------------------------
 -- Fim da configuração
