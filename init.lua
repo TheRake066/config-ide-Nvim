@@ -1,5 +1,5 @@
 -- O Rake's NeoVim Config (init.lua)
--- atualizado 05/08/25
+
 ---------------------------
 -- 1. Gerenciador: Lazy.nvim
 ---------------------------
