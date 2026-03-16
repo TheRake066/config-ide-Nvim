@@ -8,7 +8,7 @@ require("supermaven-nvim").setup({
     clear_suggestion = "<C-]>",
     accept_word = "<C-j>",
   },
-  ignore_filetypes = { "gitcommit", "txt", "lua" },
+  ignore_filetypes = { "gitcommit", "txt", "lua", "md" },
   color = {
     suggestion_color = "#6c7086",
   },
