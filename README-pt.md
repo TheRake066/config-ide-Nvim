@@ -205,7 +205,7 @@ Esse repositório [Minha Config do Nvim](https://github.com/Orake/Minha-Config-d
 Desenvolvido com ❤️ por [TheRake]
 
 - GitHub: [@TheRake066](https://github.com/TheRake066)
-- Email: sidneyvr01@gmail.commands
+- Email: sidneyvr01@gmail.com
 
 ## 🙏 Agradecimentos
 
