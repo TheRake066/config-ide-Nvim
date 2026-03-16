@@ -71,8 +71,8 @@ Esse repositório [Minha Config do Nvim](https://github.com/Orake/Minha-Config-d
 ## 📦 Dependências
 
 ### Obrigatórias
-| Dependência | Instalação |
-|-------------|------------|
+| Dependência |
+|-------------|
 | [NeoVim 0.10+](https://neovim.io/) |
 | [Git](https://git-scm.com/) |
 | [Node.js + npm](https://nodejs.org/) |
