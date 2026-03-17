@@ -122,6 +122,13 @@ keymap("n", "<leader>tf", function()
   api.tree.open()
 end, { desc = "Toggle float NvimTree" })
 
+keymap("n", "<leader>tp", function()
+  local path = vim.fn.input("Pasta: ", vim.fn.expand("~"), "dir")
+  if path ~= "" then
+    require("nvim-tree.api").tree.open({ path = path })
+  end
+end, { desc = "NvimTree em pasta específica" })
+
 keymap("n", "<leader>ts", function()
   local api = require("nvim-tree.api")
   api.tree.close()
