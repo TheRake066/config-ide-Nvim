@@ -82,6 +82,25 @@ keymap("n", "<C-d>", "yyP", { desc = " Copiar linha" })
 keymap("n", "<leader>mm", "gcc", { remap = true, desc = " Comentar linha" })
 
 -- ═══════════════════════════════════════════════════════════════
+--  Splits
+-- ═══════════════════════════════════════════════════════════════
+keymap("n", "<leader>sv", ":vsplit<CR>", { desc = "Split vertical" })
+keymap("n", "<leader>sh", ":split<CR>", { desc = "Split horizontal" })
+keymap("n", "<leader>sc", ":close<CR>", { desc = "Fechar split" })
+---
+keymap("n", "<leader>s+", ":resize +5<CR>", { desc = "Aumentar split vertical" })
+keymap("n", "<leader>s-", ":resize -5<CR>", { desc = "Diminuir split vertical" })
+keymap("n", "<leader>s>", ":vertical resize +5<CR>", { desc = "Aumentar split horizontal" })
+keymap("n", "<leader>s<", ":vertical resize -5<CR>", { desc = "Diminuir split horizontal" })
+---
+keymap("n", "<leader>sH", "<C-w>H", { desc = "Mover split pra esquerda" })
+keymap("n", "<leader>sJ", "<C-w>J", { desc = "Mover split pra baixo" })
+keymap("n", "<leader>sK", "<C-w>K", { desc = "Mover split pra cima" })
+keymap("n", "<leader>sL", "<C-w>L", { desc = "Mover split pra direita" })
+---
+keymap("n", "<leader>se", "<C-w>=", { desc = "Equalizar splits" })
+
+-- ═══════════════════════════════════════════════════════════════
 --  Indentação
 -- ═══════════════════════════════════════════════════════════════
 keymap("n", "<Tab>", ">>", { desc = "Indentar" })

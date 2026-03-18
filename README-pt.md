@@ -160,6 +160,18 @@ Esse repositório [Minha Config do Nvim](https://github.com/Orake/Minha-Config-d
 | `<leader>rj` | Normal | Rodar Java                            |
 | `<leader>rf` | Normal | Rodar Flet                            |
 | `<leader>rv` | Normal | Reload config NeoVim                  |
+| `<leader>sv` | Normal | Split vertical                        |
+| `<leader>sh` | Normal | Split horizontal                      |
+| `<leader>sc` | Normal | Fecha split                           |
+| `<leader>s+` | Normal | Aumenta split vertical                |
+| `<leader>s-` | Normal | Diminui split vertical                |
+| `<leader>s>` | Normal | Aumenta split horizontal              |
+| `<leader>s<` | Normal | Diminui split horizontal              |
+| `<leader>sH` | Normal | Move split pra esquerda               |
+| `<leader>sJ` | Normal | Move split pra baixo                  |
+| `<leader>sK` | Normal | Move split pra cima                   |
+| `<leader>sL` | Normal | Move split pra direita                |
+| `<leader>se` | Normal | Iguarlar splits                       |
 | `<leader>tt` | Normal | Abrir terminal                        |
 | `<leader>dt` | Normal | Toggle Breakpoint                     |
 | `<leader>dc` | Normal | Continuar debug                       |
