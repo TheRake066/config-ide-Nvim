@@ -5,8 +5,8 @@
 require("lualine").setup({
   options = {
     theme = "auto",
-    section_separators = { left = '', right = '' },
-    component_separators = { left = '', right = '' },
+    section_separators = { left = '', right = '' },
+    component_separators = { left = '', right = '' },
     globalstatus = true,
   },
   sections = {
@@ -15,10 +15,10 @@ require("lualine").setup({
     lualine_c = {
       {
         'filename',
-        path = 1,
+        path = 0,
         symbols = {
-          modified = ' � Modifier',
-          readonly = ' �锁定 ',
+          modified = ' ●',
+          readonly = ' ',
           unnamed = '[No Name]',
           newfile = ' 󰋽 New',
         }
@@ -39,4 +39,3 @@ require("lualine").setup({
     lualine_z = { 'location' },
   },
 })
-

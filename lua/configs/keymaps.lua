@@ -73,7 +73,7 @@ keymap("n", "<A-j>", ":m .+1<CR>==", { desc = "󰳛 Mover linha baixo" })
 keymap("n", "<A-k>", ":m .-2<CR>==", { desc = " Mover linha cima" })
 keymap("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = " Mover linhas baixo" })
 keymap("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = " Mover linhas cima" })
-keymap("n", "<A-[", "u", { desc = " Desfazer ação"})
+keymap("n", "<A-[>", "u", { desc = " Desfazer ação"})
 keymap("n", "<A-]>", "C-r", { desc = "󰑏 Refazer ação"})
 
 -- ═══════════════════════════════════════════════════════════════

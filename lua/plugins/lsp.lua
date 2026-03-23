@@ -7,12 +7,12 @@
 -- Aqui apenas configurações adicionais se necessário
 
 -- Configurar capabilities para autocompletar
-local capabilities = vim.tbl_deep_extend(
-  "force",
-  {},
-  vim.lsp.protocol.make_client_capabilities(),
-  require("cmp_nvim_lsp").default_capabilities()
-)
+-- local capabilities = vim.tbl_deep_extend(
+--   "force",
+--   {},
+--   vim.lsp.protocol.make_client_capabilities(),
+--   require("cmp_nvim_lsp").default_capabilities()
+-- )
 
 -- Você pode adicionar configurações específicas por linguagem aqui
 -- Exemplo para Python:

@@ -126,6 +126,16 @@ require("lazy").setup({
   --  Extras
   -- ═══════════════════════════════════════════════════════════
   {
+    "utilyre/barbecue.nvim",
+    dependencies = {
+      "SmiteshP/nvim-navic",
+      "nvim-tree/nvim-web-devicons",
+    },
+    config = function()
+      require("plugins.configs.barbecue")
+    end,
+  },
+  {
     "smjonas/inc-rename.nvim",
     config = function()
       require("inc_rename").setup()

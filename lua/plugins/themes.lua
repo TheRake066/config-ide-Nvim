@@ -75,6 +75,9 @@ _G.apply_theme = function(theme)
     vim.cmd("colorscheme rose-pine")
   end
 
+  vim.api.nvim_set_hl(0, "CursorLine", { bg = "none" })
+  vim.api.nvim_set_hl(0, "CursorLineNr", { bold = true, fg = "#ffdc00" })
+
   if trans then
     vim.api.nvim_set_hl(0, "Normal",      { bg = "none" })
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
