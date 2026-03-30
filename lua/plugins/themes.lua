@@ -20,7 +20,9 @@ local themes_list = {
   "vscode",
   "material",
   "oxocarbon",
-  "rose-pine"
+  "rose-pine",
+  "cyberdream",
+  "bamboo",
 }
 
 local function is_transparent()
@@ -70,6 +72,18 @@ _G.apply_theme = function(theme)
     vim.cmd("colorscheme material")
   elseif theme == "oxocarbon" then
     vim.cmd("colorscheme oxocarbon")
+  elseif theme == "cyberdream" then
+    require("cyberdream").setup({
+      transparent = trans,
+      variant = "default",
+    })
+    vim.cmd("colorscheme cyberdream")
+  elseif theme == "bamboo" then
+    require("bamboo").setup({
+      style = "multiplex",
+      transparent = trans,
+    })
+    vim.cmd("colorscheme bamboo")
   elseif theme == "rose-pine" then
     require("rose-pine").setup({ variant = "moon", disable_background = trans })
     vim.cmd("colorscheme rose-pine")
@@ -77,6 +91,7 @@ _G.apply_theme = function(theme)
 
   vim.api.nvim_set_hl(0, "CursorLine", { bg = "none" })
   vim.api.nvim_set_hl(0, "CursorLineNr", { bold = true, fg = "#ffdc00" })
+  vim.api.nvim_set_hl(0, "Whitespace", { fg = "#3a3a3a" })
 
   if trans then
     vim.api.nvim_set_hl(0, "Normal",      { bg = "none" })
