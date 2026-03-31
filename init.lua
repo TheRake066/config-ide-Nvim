@@ -17,9 +17,6 @@ require("configs.autocmds")
 -- Commandos Personalizados
 require("configs.commands")
 
--- Plugins de Interface
-require("plugins.ui")
-
 -- LSP e Autocomplete
 require("plugins.lsp")
 require("plugins.cmp")
@@ -37,4 +34,3 @@ require("plugins.dap")
 require("plugins.themes")
 
 print("✅ NeoVim carregado com sucesso!")
-

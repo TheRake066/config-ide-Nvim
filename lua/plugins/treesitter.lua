@@ -2,7 +2,7 @@
 --  Treesitter Config
 -- ═══════════════════════════════════════════════════════════════
 
-require('nvim-treesitter').setup({
+require("nvim-treesitter").setup({
   ensure_installed = {
     'python',
     'lua',
@@ -30,4 +30,3 @@ require('nvim-treesitter').setup({
 })
 
 print("✅ Treesitter configurado!")
-

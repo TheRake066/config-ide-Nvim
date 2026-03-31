@@ -94,7 +94,12 @@ require("lazy").setup({
 		end,
 		event = "VeryLazy",
 	},
-	{ "lewis6991/gitsigns.nvim" },
+	{
+		"lewis6991/gitsigns.nvim",
+		config = function()
+			require("plugins.configs.gitsigns")
+		end,
+	},
 
 	-- ═══════════════════════════════════════════════════════════
 	--  LSP & Autocomplete
@@ -147,7 +152,12 @@ require("lazy").setup({
 	-- ═══════════════════════════════════════════════════════════
 	--  Autopairs
 	-- ═══════════════════════════════════════════════════════════
-	{ "windwp/nvim-autopairs" },
+	{
+		"windwp/nvim-autopairs",
+		config = function()
+			require("plugins.configs.autopairs")
+		end,
+	},
 
 	-- ═══════════════════════════════════════════════════════════
 	--  Extras
@@ -180,7 +190,13 @@ require("lazy").setup({
 			require("inc_rename").setup()
 		end,
 	},
-	{ "IogaMaster/neocord", event = "VeryLazy" },
+	{
+		"IogaMaster/neocord",
+		event = "VeryLazy",
+		config = function()
+			require("plugins.configs.neocord")
+		end,
+	},
 	{
 		"supermaven-inc/supermaven-nvim",
 		config = function()

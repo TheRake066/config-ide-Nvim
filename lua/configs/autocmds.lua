@@ -70,18 +70,3 @@ vim.lsp.config("clangd", {
 vim.lsp.enable("pyright")
 vim.lsp.enable("clangd")
 
--- ═══════════════════════════════════════════════════════════════
---  GitSigns
--- ═══════════════════════════════════════════════════════════════
-
-autocmd("BufReadPre", {
-  pattern = "*",
-  callback = function()
-    local gs = package.loaded.gitsigns
-    if gs then
-      vim.keymap.set("n", "<leader>gp", gs.preview_hunk, { buffer = true, desc = "Preview Hunk" })
-      vim.keymap.set("n", "<leader>gb", gs.blame_line, { buffer = true, desc = "Blame Line" })
-    end
-  end,
-})
-

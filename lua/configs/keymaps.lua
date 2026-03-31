@@ -3,8 +3,6 @@
 -- ═══════════════════════════════════════════════════════════════
 
 local keymap = vim.keymap.set
-local nvim_tree_side = "right"
-local nvim_tree_float = true
 vim.opt.splitbelow = true
 
 -- ═══════════════════════════════════════════════════════════════
@@ -114,64 +112,18 @@ keymap("v", "<S-Tab>", "<gv", { desc = "Desindentar bloco" })
 -- ═══════════════════════════════════════════════════════════════
 keymap("n", "<C-a>", ":NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
 keymap("n", "<leader>tf", function()
-	local api = require("nvim-tree.api")
-	api.tree.close()
-	nvim_tree_float = not nvim_tree_float
-	require("nvim-tree").setup({
-		view = {
-			side = nvim_tree_side,
-			float = {
-				enable = nvim_tree_float,
-				open_win_config = function()
-					local screen_w = vim.opt.columns:get()
-					local screen_h = vim.opt.lines:get() - vim.opt.cmdheight:get()
-					return {
-						relative = "editor",
-						border = "rounded",
-						width = math.floor(screen_w * 0.3),
-						height = math.floor(screen_h * 0.8),
-						row = math.floor(screen_h * 0.1),
-						col = nvim_tree_side == "right" and math.floor(screen_w * 0.65) or math.floor(screen_w * 0.05),
-					}
-				end,
-			},
-		},
-	})
-	api.tree.open()
+	require("plugins.configs.nvimtree").toggle_float()
 end, { desc = "Toggle float NvimTree" })
 
 keymap("n", "<leader>tp", function()
 	local path = vim.fn.input("Pasta: ", vim.fn.expand("~"), "dir")
 	if path ~= "" then
-		require("nvim-tree.api").tree.open({ path = path })
+		require("plugins.configs.nvimtree").open_path(path)
 	end
 end, { desc = "NvimTree em pasta específica" })
 
 keymap("n", "<leader>ts", function()
-	local api = require("nvim-tree.api")
-	api.tree.close()
-	nvim_tree_side = nvim_tree_side == "right" and "left" or "right"
-	require("nvim-tree").setup({
-		view = {
-			side = nvim_tree_side,
-			float = {
-				enable = nvim_tree_float,
-				open_win_config = function()
-					local screen_w = vim.opt.columns:get()
-					local screen_h = vim.opt.lines:get() - vim.opt.cmdheight:get()
-					return {
-						relative = "editor",
-						border = "rounded",
-						width = math.floor(screen_w * 0.3),
-						height = math.floor(screen_h * 0.8),
-						row = math.floor(screen_h * 0.1),
-						col = nvim_tree_side == "right" and math.floor(screen_w * 0.65) or math.floor(screen_w * 0.05),
-					}
-				end,
-			},
-		},
-	})
-	api.tree.open()
+	require("plugins.configs.nvimtree").toggle_side()
 end, { desc = "Toggle Side NvimTree" })
 
 -- ═══════════════════════════════════════════════════════════════
@@ -219,7 +171,7 @@ keymap("n", "<leader>hc", "<cmd>HopChar1<cr>", { desc = "Hop para caractere" })
 -- ToggleTerm (já tem o <C-\> automático)
 keymap("n", "<leader>th", "<cmd>ToggleTerm direction=horizontal<cr>", { desc = "Terminal horizontal" })
 keymap("n", "<leader>tv", "<cmd>ToggleTerm direction=vertical<cr>", { desc = "Terminal vertical" })
-keymap("n", "<leader>tb", "<cmd>ToggleTerm direction=float<cr>", { desc = "Terminal flutuante" })
+keymap("n", "<leader>tF", "<cmd>ToggleTerm direction=float<cr>", { desc = "Terminal flutuante" })
 
 -- Conform
 keymap("n", "<leader>fmt", function()
