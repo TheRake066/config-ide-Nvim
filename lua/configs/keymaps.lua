@@ -130,9 +130,18 @@ end, { desc = "Toggle Side NvimTree" })
 -- Telescope
 -- ═══════════════════════════════════════════════════════════════
 keymap("n", "<leader>fc", function()
+	local find_command = nil
+
+	if vim.fn.executable("fd") == 1 then
+		find_command = { "fd", "--type", "f", "--follow" }
+	elseif vim.fn.executable("rg") == 1 then
+		find_command = { "rg", "--files", "--follow" }
+	end
+
 	require("telescope.builtin").find_files({
 		cwd = vim.fn.stdpath("config"),
 		prompt_title = "Config NeoVim",
+		find_command = find_command,
 	})
 end, { desc = " Buscar Config NeoVim" })
 
