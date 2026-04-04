@@ -41,6 +41,8 @@ vim.api.nvim_create_user_command("MenuHelp", function()
 		"     <Ctrl-d>     Copiar linha                           ",
 		"     <leader>mm   Comentar linha                         ",
 		"     <leader>fmt  Formatar arquivo                       ",
+		"     <leader>tm   Toggle Supermaven                      ",
+		"     <leader>tM   Status Supermaven                      ",
 		"                                                          ",
 		"  🪟  Interface                                          ",
 		"     <C-a>        Toggle NvimTree                        ",

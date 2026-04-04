@@ -19,6 +19,8 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
+local supermaven_enabled = true
+
 -- Setup Lazy
 require("lazy").setup({
 	-- ═══════════════════════════════════════════════════════════
@@ -199,6 +201,7 @@ require("lazy").setup({
 	},
 	{
 		"supermaven-inc/supermaven-nvim",
+		enabled = supermaven_enabled,
 		config = function()
 			require("plugins.configs.supermaven")
 		end,

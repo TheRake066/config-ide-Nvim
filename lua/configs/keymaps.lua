@@ -167,6 +167,9 @@ keymap("n", "<leader>tb", function()
 	_G.toggle_transparent()
 end, { desc = "Toggle transparência" })
 
+keymap("n", "<leader>tm", ":SupermavenToggle<CR>", { desc = "Toggle Supermaven" })
+keymap("n", "<leader>tM", ":SupermavenStatus<CR>", { desc = "Status Supermaven" })
+
 -- Testing...
 -- Trouble
 keymap("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Toggle Trouble" })
