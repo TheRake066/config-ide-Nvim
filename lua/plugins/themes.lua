@@ -5,138 +5,226 @@
 local theme_file = vim.fn.stdpath("data") .. "/theme.txt"
 local trans_file = vim.fn.stdpath("data") .. "/transparent.txt"
 
-local themes_list = {
-  "gruvbox",
-  "nord",
-  "onedarkpro",
-  "dracula",
-  "solarized-dark",
-  "solarized-light",
-  "tokyonight",
-  "catppuccin",
-  "kanagawa",
-  "nightfox",
-  "carbonfox",
-  "vscode",
-  "material",
-  "oxocarbon",
-  "rose-pine",
-  "cyberdream",
-  "bamboo",
+local themes = {
+	onedark = {
+		setup = function(trans)
+			require("onedark").setup({
+				style = "warm",
+				transparent = trans,
+				term_colors = true,
+				code_style = {
+					comments = "italic",
+					keywords = "bold",
+					functions = "bold",
+					strings = "none",
+					variables = "italic",
+				},
+			})
+		end,
+		colorscheme = "onedark",
+	},
+	gruvbox = {
+		setup = function(trans)
+			require("gruvbox").setup({ transparent_mode = trans })
+		end,
+		colorscheme = "gruvbox",
+	},
+	nord = { colorscheme = "nord" },
+	dracula = { colorscheme = "dracula" },
+	onedarkpro = { colorscheme = "onedarkpro" },
+	tokyonight = {
+		setup = function(trans)
+			require("tokyonight").setup({ style = "storm", transparent = trans })
+		end,
+		colorscheme = "tokyonight",
+	},
+	catppuccin = {
+		setup = function(trans)
+			require("catppuccin").setup({ flavour = "mocha", transparent_background = trans })
+		end,
+		colorscheme = "catppuccin",
+	},
+	kanagawa = {
+		setup = function(trans)
+			require("kanagawa").setup({ transparent = trans })
+		end,
+		colorscheme = "kanagawa",
+	},
+	nightfox = { colorscheme = "nightfox" },
+	carbonfox = { colorscheme = "carbonfox" },
+	vscode = {
+		setup = function(trans)
+			require("vscode").setup({ transparent = trans })
+		end,
+		colorscheme = "vscode",
+	},
+	material = {
+		setup = function()
+			require("material").setup({ style = "deep" })
+		end,
+		colorscheme = "material",
+	},
+	oxocarbon = { colorscheme = "oxocarbon" },
+	cyberdream = {
+		setup = function(trans)
+			require("cyberdream").setup({
+				transparent = trans,
+				variant = "default",
+			})
+		end,
+		colorscheme = "cyberdream",
+	},
+	bamboo = {
+		setup = function(trans)
+			require("bamboo").setup({
+				style = "multiplex",
+				transparent = trans,
+			})
+		end,
+		colorscheme = "bamboo",
+	},
+	["rose-pine"] = {
+		setup = function(trans)
+			require("rose-pine").setup({ variant = "moon", disable_background = trans })
+		end,
+		colorscheme = "rose-pine",
+	},
+	["solarized-dark"] = {
+		before = function()
+			vim.o.background = "dark"
+		end,
+		colorscheme = "solarized",
+	},
+	["solarized-light"] = {
+		before = function()
+			vim.o.background = "light"
+		end,
+		colorscheme = "solarized",
+	},
 }
 
+local theme_names = {
+	"onedark",
+	"gruvbox",
+	"nord",
+	"onedarkpro",
+	"dracula",
+	"solarized-dark",
+	"solarized-light",
+	"tokyonight",
+	"catppuccin",
+	"kanagawa",
+	"nightfox",
+	"carbonfox",
+	"vscode",
+	"material",
+	"oxocarbon",
+	"rose-pine",
+	"cyberdream",
+	"bamboo",
+}
+
+local custom_highlights = function(trans)
+	if trans then
+		vim.api.nvim_set_hl(0, "CursorLine", { bg = "none" })
+		vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+		vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+	else
+		vim.api.nvim_set_hl(0, "CursorLine", {})
+		vim.api.nvim_set_hl(0, "Normal", {})
+		vim.api.nvim_set_hl(0, "NormalFloat", {})
+	end
+	vim.api.nvim_set_hl(0, "CursorLineNr", { bold = true, fg = "#ffdc00" })
+	vim.api.nvim_set_hl(0, "Whitespace", { fg = "#3a3a3a" })
+
+	vim.api.nvim_set_hl(0, "@keyword", { fg = "#e06c75" })
+	vim.api.nvim_set_hl(0, "@string", { fg = "#ffdc00" })
+	vim.api.nvim_set_hl(0, "@comment", { fg = "#5c6370", italic = true })
+	vim.api.nvim_set_hl(0, "@keyword.import", { fg = "#fa6363", bold = true })
+	vim.api.nvim_set_hl(0, "@keyword.function", { fg = "#fa6363", bold = true })
+	vim.api.nvim_set_hl(0, "@keyword.conditional", { fg = "#fa6363", bold = true })
+	vim.api.nvim_set_hl(0, "@keyword.repeat", { fg = "#fa6363", bold = true })
+	vim.api.nvim_set_hl(0, "@keyword.operator", { fg = "#fa6363", bold = true })
+	vim.api.nvim_set_hl(0, "@keyword.exception", { fg = "#fa6363", bold = true })
+	vim.api.nvim_set_hl(0, "@variable", { fg = "#cdcdcd", italic = true })
+	vim.api.nvim_set_hl(0, "@module", { fg = "#cdcdcd" })
+	vim.api.nvim_set_hl(0, "@function.builtin", { fg = "#cdcdcd" })
+	vim.api.nvim_set_hl(0, "@function", { fg = "#fecf5f" })
+	vim.api.nvim_set_hl(0, "@number", { fg = "#c678dd" })
+	vim.api.nvim_set_hl(0, "@punctuation.bracket", { fg = "#a565b9" })
+	vim.api.nvim_set_hl(0, "@function.method", { fg = "#fecf5f" })
+	vim.api.nvim_set_hl(0, "@type.builtin", { fg = "#83ffd1" })
+	vim.api.nvim_set_hl(0, "@number.float", { fg = "#83ffd1" })
+	vim.api.nvim_set_hl(0, "@string.escape", { fg = "#83ffd1" })
+	vim.api.nvim_set_hl(0, "@boolean", { fg = "#008252" })
+
+end
+
 local function is_transparent()
-  if vim.fn.filereadable(trans_file) == 1 then
-    return vim.fn.readfile(trans_file)[1] == "true"
-  end
-  return true
+	if vim.fn.filereadable(trans_file) == 1 then
+		return vim.fn.readfile(trans_file)[1] == "true"
+	end
+	return true
 end
 
 _G.apply_theme = function(theme)
-  vim.cmd("highlight clear")
-  local trans = is_transparent()
+	local spec = themes[theme] or themes.onedark
+	local trans = is_transparent()
 
-  if theme == "gruvbox" then
-    require("gruvbox").setup({ transparent_mode = trans })
-    vim.cmd("colorscheme gruvbox")
-  elseif theme == "nord" then
-    vim.cmd("colorscheme nord")
-  elseif theme == "onedarkpro" then
-    vim.cmd("colorscheme onedarkpro")
-  elseif theme == "dracula" then
-    vim.cmd("colorscheme dracula")
-  elseif theme == "solarized-dark" then
-    vim.cmd("colorscheme solarized")
-    vim.o.background = "dark"
-  elseif theme == "solarized-light" then
-    vim.cmd("colorscheme solarized")
-    vim.o.background = "light"
-  elseif theme == "tokyonight" then
-    require("tokyonight").setup({ style = "storm", transparent = trans })
-    vim.cmd("colorscheme tokyonight")
-  elseif theme == "catppuccin" then
-    require("catppuccin").setup({ flavour = "mocha", transparent_background = trans })
-    vim.cmd("colorscheme catppuccin")
-  elseif theme == "kanagawa" then
-    require("kanagawa").setup({ transparent = trans })
-    vim.cmd("colorscheme kanagawa")
-  elseif theme == "nightfox" then
-    vim.cmd("colorscheme nightfox")
-  elseif theme == "carbonfox" then
-    vim.cmd("colorscheme carbonfox")
-  elseif theme == "vscode" then
-    require("vscode").setup({ transparent = trans })
-    vim.cmd("colorscheme vscode")
-  elseif theme == "material" then
-    require("material").setup({ style = "deep" })
-    vim.cmd("colorscheme material")
-  elseif theme == "oxocarbon" then
-    vim.cmd("colorscheme oxocarbon")
-  elseif theme == "cyberdream" then
-    require("cyberdream").setup({
-      transparent = trans,
-      variant = "default",
-    })
-    vim.cmd("colorscheme cyberdream")
-  elseif theme == "bamboo" then
-    require("bamboo").setup({
-      style = "multiplex",
-      transparent = trans,
-    })
-    vim.cmd("colorscheme bamboo")
-  elseif theme == "rose-pine" then
-    require("rose-pine").setup({ variant = "moon", disable_background = trans })
-    vim.cmd("colorscheme rose-pine")
-  end
+	if spec.before then
+		spec.before()
+	end
 
-  vim.api.nvim_set_hl(0, "CursorLine", { bg = "none" })
-  vim.api.nvim_set_hl(0, "CursorLineNr", { bold = true, fg = "#ffdc00" })
-  vim.api.nvim_set_hl(0, "Whitespace", { fg = "#3a3a3a" })
+	if spec.setup then
+		spec.setup(trans)
+	end
 
-  if trans then
-    vim.api.nvim_set_hl(0, "Normal",      { bg = "none" })
-    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-  end
+	vim.cmd("colorscheme " .. spec.colorscheme)
+	custom_highlights(trans)
 end
 
 local function load_theme()
-  if vim.fn.filereadable(theme_file) == 1 then
-    local theme = vim.fn.readfile(theme_file)[1]
-    if theme then
-      _G.apply_theme(theme)
-      return
-    end
-  end
-  _G.apply_theme("onedark")
+	if vim.fn.filereadable(theme_file) == 1 then
+		local theme = vim.fn.readfile(theme_file)[1]
+		if theme and themes[theme] then
+			_G.apply_theme(theme)
+			return
+		end
+	end
+
+	_G.apply_theme("onedark")
 end
 
 _G.theme_selector = function()
-  vim.ui.select(themes_list, { prompt = "Escolha seu tema:" }, function(choice)
-    if choice then
-      _G.apply_theme(choice)
-      vim.fn.writefile({ choice }, theme_file)
-      vim.notify("Tema: " .. choice, vim.log.levels.INFO)
-    end
-  end)
+	vim.ui.select(theme_names, { prompt = "Escolha seu tema:" }, function(choice)
+		if choice then
+			_G.apply_theme(choice)
+			vim.fn.writefile({ choice }, theme_file)
+			vim.notify("Tema: " .. choice, vim.log.levels.INFO)
+		end
+	end)
 end
 
 _G.toggle_transparent = function()
-  local new = not is_transparent()
-  vim.fn.writefile({ tostring(new) }, trans_file)
-  if vim.fn.filereadable(theme_file) == 1 then
-    local theme = vim.fn.readfile(theme_file)[1]
-    if theme then
-      _G.apply_theme(theme)
-    end
-  end
-  local msg = new and "Transparente ✨" or "Fundo sólido 🎨"
-  vim.notify(msg, vim.log.levels.INFO)
+	local new = not is_transparent()
+	vim.fn.writefile({ tostring(new) }, trans_file)
+
+	if vim.fn.filereadable(theme_file) == 1 then
+		local theme = vim.fn.readfile(theme_file)[1]
+		if theme and themes[theme] then
+			_G.apply_theme(theme)
+		else
+			_G.apply_theme("onedark")
+		end
+	else
+		_G.apply_theme("onedark")
+	end
+
+	vim.notify(new and "Transparente" or "Fundo sólido", vim.log.levels.INFO)
 end
 
 vim.schedule(load_theme)
 
 vim.api.nvim_create_user_command("Theme", function()
-  _G.theme_selector()
+	_G.theme_selector()
 end, {})
-
-print("✅ Themes configurado!")

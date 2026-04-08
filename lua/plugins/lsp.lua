@@ -2,21 +2,30 @@
 --  LSP Config
 -- ═══════════════════════════════════════════════════════════════
 
--- Configuração do LSP (NeoVim 0.11+)
--- Já configurado em autocmds.lua via vim.lsp.config
--- Aqui apenas configurações adicionais se necessário
+local capabilities = vim.tbl_deep_extend(
+	"force",
+	{},
+	vim.lsp.protocol.make_client_capabilities(),
+	require("cmp_nvim_lsp").default_capabilities()
+)
 
--- Configurar capabilities para autocompletar
--- local capabilities = vim.tbl_deep_extend(
---   "force",
---   {},
---   vim.lsp.protocol.make_client_capabilities(),
---   require("cmp_nvim_lsp").default_capabilities()
--- )
+vim.lsp.config("pyright", {
+	capabilities = capabilities,
+	settings = {
+		python = {
+			analysis = {
+				autoSearchPaths = true,
+				diagnosticMode = "workspace",
+				useLibraryCodeForTypes = true,
+			},
+		},
+	},
+})
 
--- Você pode adicionar configurações específicas por linguagem aqui
--- Exemplo para Python:
--- vim.lsp.config.pyright.settings.python.analysis.typeCheckingMode = "basic"
+vim.lsp.config("clangd", {
+	capabilities = capabilities,
+	cmd = { "clangd" },
+})
 
-print("✅ LSP configurado!")
-
+vim.lsp.enable("pyright")
+vim.lsp.enable("clangd")
